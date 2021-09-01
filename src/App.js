@@ -25,9 +25,18 @@ const App = () => {
       date: new Date(2020, 9, 4),
     },
   ];
+
+  const addExpenseHandler = (data) => {
+    const getExpenseData = {
+      ...data,
+    };
+    expense.push(getExpenseData);
+    console.log(expense);
+  };
+
   return (
     <div>
-      <NewExpense />
+      <NewExpense onAddExpense={addExpenseHandler} />
       <Expense items={expense} />
     </div>
   );
