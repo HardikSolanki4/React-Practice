@@ -1,9 +1,10 @@
-import React, { useContext, useReducer, useState } from 'react';
+import React, { useContext, useReducer, useRef, useState } from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
 import AuthContext from '../../store/auth-context';
+import Input from '../UI/Input/Input';
 
 const inputReducer = (state, action) => {
   if (action.inputType === 'EMAIL') {
@@ -56,6 +57,8 @@ const Login = (props) => {
   });
 
   const authCtx = useContext(AuthContext);
+  const emailRef = useRef();
+  const passwordRef = useRef();
 
   const emailChangeHandler = (event) => {
     inputDispatch({ inputType: 'EMAIL', value: event.target.value });
@@ -81,48 +84,45 @@ const Login = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    authCtx.onLogin(inputState.inputType.email, inputState.inputType.password);
+    if (formIsValid) {
+      authCtx.onLogin(
+        inputState.inputType.email,
+        inputState.inputType.password
+      );
+    } else if (!inputState.inputType.isEmailValid) {
+      emailRef.current.focus();
+    } else {
+      passwordRef.current.focus();
+    }
   };
 
   return (
     <Card className={classes.login}>
       <form onSubmit={submitHandler}>
-        <div
-          className={`${classes.control} ${
-            !inputState.inputType.isEmailValid &&
-            inputState.inputType.isDirtyEmail
-              ? classes.invalid
-              : ''
-          }`}
-        >
-          <label htmlFor='email'>E-Mail</label>
-          <input
-            type='email'
-            id='email'
-            value={inputState.inputType.email}
-            onChange={emailChangeHandler}
-            onBlur={validateEmailHandler}
-          />
-        </div>
-        <div
-          className={`${classes.control} ${
-            !inputState.inputType.isPasswordValid &&
-            inputState.inputType.isDirtyPassword
-              ? classes.invalid
-              : ''
-          }`}
-        >
-          <label htmlFor='password'>Password</label>
-          <input
-            type='password'
-            id='password'
-            value={inputState.inputType.password}
-            onChange={passwordChangeHandler}
-            onBlur={validatePasswordHandler}
-          />
-        </div>
+        <Input
+          ref={emailRef}
+          isDirty={inputState.inputType.isDirtyEmail}
+          isValid={!inputState.inputType.isEmailValid}
+          id='email'
+          label='email'
+          type='email'
+          value={inputState.inputType.email}
+          onChange={emailChangeHandler}
+          onBlur={validateEmailHandler}
+        />
+        <Input
+          ref={passwordRef}
+          isDirty={inputState.inputType.isDirtyPassword}
+          isValid={!inputState.inputType.isPasswordValid}
+          id='password'
+          label='password'
+          type='password'
+          value={inputState.inputType.password}
+          onChange={passwordChangeHandler}
+          onBlur={validatePasswordHandler}
+        />
         <div className={classes.actions}>
-          <Button type='submit' className={classes.btn} disabled={!formIsValid}>
+          <Button type='submit' className={classes.btn}>
             Login
           </Button>
         </div>
