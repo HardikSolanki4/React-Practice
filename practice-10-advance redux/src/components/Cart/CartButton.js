@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import store, { toggleCart } from '../../store';
 
 const CartButton = (props) => {
-  const totalCartItems = useSelector(state => state.cart.totalItem);
+  const totalCartItems = useSelector(state => state.cart.totalQuantity);
 
   const cartToggleHandler = (event) => {
     event.preventDefault();
