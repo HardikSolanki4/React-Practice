@@ -4,7 +4,6 @@ const cartInitialItems = {
   cart: {
     items: [],
     totalQuantity: 0,
-    changed: false
   },
   showCart: false,
   notification: null,
@@ -14,14 +13,9 @@ const cartItemReducer = createSlice({
   name: 'cart',
   initialState: cartInitialItems,
   reducers: {
-    replaceCart(state, action){
-      state.cart.totalQuantity = action.payload.totalQuantity;
-      state.cart.items = action.payload.items || [];
-    },
     itemAdd(state, action) {
       const newItem = action.payload;
       state.cart.totalQuantity++;
-      state.cart.changed = true;
       const existingItem = state.cart.items.find(
         (item) => item.id === newItem.id
       );
@@ -43,7 +37,6 @@ const cartItemReducer = createSlice({
     itemRemove(state, action) {
       const id = action.payload;
       state.cart.totalQuantity--;
-      state.cart.changed = true;
       const existingItem = state.cart.items.find((item) => item.id === id);
       if (existingItem.quantity === 1) {
         state.cart.items = state.cart.items.filter((item) => item.id !== id);
@@ -72,10 +65,69 @@ const cartItemReducer = createSlice({
   },
 });
 
+export const sendRequestData = (cart) => {
+  return async (dispatch) => {
+    dispatch(
+      showNotification({
+        status: 'pending',
+        message: 'Please wait..',
+        title: 'sending data..',
+      })
+    );
+
+    const fetchAPI = () => {
+      return new Promise((resolve, reject) => {
+        fetch('https://food-app-2315-default-rtdb.firebaseio.com/cart.json', {
+          method: 'PUT',
+          body: JSON.stringify(cart),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              dispatch(
+                showNotification({
+                  status: 'error',
+                  message: 'Sorry we are fail to load..',
+                  title: 'request failed..',
+                })
+              );
+              resolve();
+            }
+          })
+          .catch((error) => {
+            console.log('error');
+            reject(error);
+          });
+      });
+    };
+
+    try {
+      const getFetch = await fetchAPI();
+      if (getFetch) {
+        dispatch(
+          showNotification({
+            status: 'success',
+            message: 'successfully..',
+            title: 'data updated..',
+          })
+        );
+      }
+    } catch (error) {
+      console.log('error', error);
+      dispatch(
+        showNotification({
+          status: 'error',
+          message: 'Sorry we are fail to load..',
+          title: 'request failed..',
+        })
+      );
+    }
+  };
+};
+
 const store = configureStore({
   reducer: cartItemReducer.reducer,
 });
 export const { itemAdd, itemRemove, toggleCart, showNotification } =
   cartItemReducer.actions;
-export const cartActions = cartItemReducer.actions;
+export const cartReducer = cartItemReducer.actions;
 export default store;
