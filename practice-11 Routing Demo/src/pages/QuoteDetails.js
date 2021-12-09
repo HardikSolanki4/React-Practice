@@ -47,13 +47,13 @@ const QuoteDetails = () => {
       />
       <Route path={match.path} exact>
         <div className='centered'>
-          <Link className='btn--flat' to={`${match.url}comment`}>
+          <Link className='btn--flat' to={`${match.url}/comment`}>
             Load Comment
           </Link>
         </div>
       </Route>
       <Route path={`${match.url}/comment`}>
-        <Comments />
+        <Comments quotesId={quotesId}/>
       </Route>
     </div>
   );
