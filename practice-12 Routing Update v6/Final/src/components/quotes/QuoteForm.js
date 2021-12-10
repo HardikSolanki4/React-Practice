@@ -1,4 +1,5 @@
-import { Fragment, useRef, useState } from 'react';
+import { Fragment } from 'react';
+import { useRef, useState } from 'react';
 import { Prompt } from 'react-router-dom';
 
 import Card from '../UI/Card';
@@ -6,10 +7,9 @@ import LoadingSpinner from '../UI/LoadingSpinner';
 import classes from './QuoteForm.module.css';
 
 const QuoteForm = (props) => {
-  const [isEntering, setIsEntering] = useState(false);
-
   const authorInputRef = useRef();
   const textInputRef = useRef();
+  const [isFormFocused, setIsFormFocused] = useState(false);
 
   function submitFormHandler(event) {
     event.preventDefault();
@@ -18,29 +18,27 @@ const QuoteForm = (props) => {
     const enteredText = textInputRef.current.value;
 
     // optional: Could validate here
-
+    console.log(isFormFocused);
     props.onAddQuote({ author: enteredAuthor, text: enteredText });
   }
 
-  const finishEnteringHandler = () => {
-    setIsEntering(false);
+  const formFinishHandler = () => {
+    setIsFormFocused(false);
   };
 
-  const formFocusedHandler = () => {
-    setIsEntering(true);
+  const formFocusHandler = () => {
+    setIsFormFocused(true);
   };
 
   return (
     <Fragment>
       <Prompt
-        when={isEntering}
-        message={(location) =>
-          'Are you sure you want to leave? All your entered data will be lost!'
-        }
+        when={isFormFocused}
+        message={() => 'Are you sure want to leave??'}
       />
       <Card>
         <form
-          onFocus={formFocusedHandler}
+          onFocus={formFocusHandler}
           className={classes.form}
           onSubmit={submitFormHandler}
         >
@@ -59,7 +57,9 @@ const QuoteForm = (props) => {
             <textarea id='text' rows='5' ref={textInputRef}></textarea>
           </div>
           <div className={classes.actions}>
-            <button onClick={finishEnteringHandler} className='btn'>Add Quote</button>
+            <button onClick={formFinishHandler} className='btn'>
+              Add Quote
+            </button>
           </div>
         </form>
       </Card>

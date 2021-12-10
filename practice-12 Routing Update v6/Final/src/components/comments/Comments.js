@@ -1,53 +1,54 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import useHttp from '../hooks/use-http';
+import { getAllComments } from '../lib/api';
 
 import classes from './Comments.module.css';
 import NewCommentForm from './NewCommentForm';
-import useHttp from '../../hooks/use-http';
-import { getAllComments } from '../../lib/api';
 import LoadingSpinner from '../UI/LoadingSpinner';
 import CommentsList from './CommentsList';
 
-const Comments = () => {
+const Comments = ({ quotesId }) => {
   const [isAddingComment, setIsAddingComment] = useState(false);
-  const params = useParams();
-
-  const { quoteId } = params;
-
-  const { sendRequest, status, data: loadedComments } = useHttp(getAllComments);
+  const {
+    sendRequest,
+    status,
+    data: loadedCommentLists,
+  } = useHttp(getAllComments);
 
   useEffect(() => {
-    sendRequest(quoteId);
-  }, [quoteId, sendRequest]);
+    sendRequest(quotesId);
+  }, [sendRequest, quotesId]);
 
-  const startAddCommentHandler = () => {
-    setIsAddingComment(true);
-  };
-
-  const addedCommentHandler = useCallback(() => {
-    sendRequest(quoteId);
-  }, [sendRequest, quoteId]);
-
-  let comments;
+  let commentNode;
 
   if (status === 'pending') {
-    comments = (
+    commentNode = (
       <div className='centered'>
         <LoadingSpinner />
       </div>
     );
   }
 
-  if (status === 'completed' && loadedComments && loadedComments.length > 0) {
-    comments = <CommentsList comments={loadedComments} />;
+  if (
+    status === 'completed' &&
+    loadedCommentLists.length > 0 &&
+    loadedCommentLists
+  ) {
+    commentNode = <CommentsList comments={loadedCommentLists} />;
   }
 
   if (
     status === 'completed' &&
-    (!loadedComments || loadedComments.length === 0)
+    (!loadedCommentLists || loadedCommentLists.length === 0)
   ) {
-    comments = <p className='centered'>No comments were added yet!</p>;
+    commentNode = <div className='centered focused'>No Comment Yet!</div>;
   }
+
+  const startAddCommentHandler = () => {
+    setIsAddingComment(true);
+  };
+
+  const loadLatestComment = useCallback(() => {}, []);
 
   return (
     <section className={classes.comments}>
@@ -59,11 +60,11 @@ const Comments = () => {
       )}
       {isAddingComment && (
         <NewCommentForm
-          quoteId={quoteId}
-          onAddedComment={addedCommentHandler}
+          onAddedComment={loadLatestComment}
+          quotesId={quotesId}
         />
       )}
-      {comments}
+      {commentNode}
     </section>
   );
 };

@@ -1,21 +1,20 @@
 import { NavLink } from 'react-router-dom';
-
 import classes from './MainNavigation.module.css';
 
 const MainNavigation = () => {
   return (
     <header className={classes.header}>
-      <div className={classes.logo}>Great Quotes</div>
+      <div className={classes.logo}>Grate Quotes</div>
       <nav className={classes.nav}>
         <ul>
           <li>
-            <NavLink to='/quotes' activeClassName={classes.active}>
-              All Quotes
+            <NavLink activeClassName={classes.active} to='/quotes'>
+              Quotes
             </NavLink>
           </li>
           <li>
-            <NavLink to='/new-quote' activeClassName={classes.active}>
-              Add a Quote
+            <NavLink activeClassName={classes.active} to='/add-quotes'>
+              Add Quotes
             </NavLink>
           </li>
         </ul>
@@ -23,5 +22,4 @@ const MainNavigation = () => {
     </header>
   );
 };
-
 export default MainNavigation;
