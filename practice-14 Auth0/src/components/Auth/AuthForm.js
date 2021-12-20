@@ -1,14 +1,16 @@
-import { useCallback, useContext, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { addUsers } from '../../api/addUser';
 import useHttps from '../../hooks/useHttps';
 import AuthContext from '../../store/auth-context';
 
 import classes from './AuthForm.module.css';
+import { useHistory } from 'react-router-dom';
 
 const AuthForm = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const [isLogin, setIsLogin] = useState(true);
+  const history = useHistory();
   const {
     status: addUsersStatus,
     data: addUserResponse,
@@ -16,6 +18,17 @@ const AuthForm = () => {
   } = useHttps(addUsers);
 
   const authCtx = useContext(AuthContext);
+
+  useEffect(() => {
+    if (addUsersStatus === 'completed') {
+      const expireTime = new Date(
+        new Date().getTime() + +addUserResponse.expiresIn * 1000
+      ).toISOString();
+      console.log(expireTime);
+      authCtx.login(addUserResponse.idToken, expireTime);
+      history.push('/welcome');
+    }
+  }, [addUsersStatus, authCtx, history, addUserResponse]);
 
   const addUserCallback = useCallback(
     async (sendData) => {
@@ -29,10 +42,6 @@ const AuthForm = () => {
     },
     [isLogin, addUsersSendRequest]
   );
-
-  if (addUserResponse) {
-    authCtx.login(addUserResponse.idToken);
-  }
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
