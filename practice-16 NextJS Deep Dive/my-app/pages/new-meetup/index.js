@@ -19,12 +19,13 @@ const newMeetup = () => {
 
     // Same Example with Axios
     axios
-      .post('/api/new-meetup11', meetupData)
+      .post('/api/new-meetup', meetupData)
       .then((response) => {
         alert(response.data.message);
         router.push('/');
       })
       .catch((error) => {
+        alert('Something Went Wrong..!! Please try after sometime');
         console.log('error', error);
       });
   };

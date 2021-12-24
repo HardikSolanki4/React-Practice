@@ -1,27 +1,16 @@
+import Head from 'next/head';
+import { MongoClient } from 'mongodb';
+import { Fragment } from 'react';
 import MeetupList from '../components/meetups/MeetupList';
-
-const DUMMY_DATA = [
-  {
-    id: 'm1',
-    image:
-      'https://www.imgacademy.com/themes/custom/imgacademy/images/helpbox-contact.jpg',
-    title: 'First meetup',
-    address: 'Rajkot',
-  },
-  {
-    id: 'm2',
-    image:
-      'https://www.imgacademy.com/themes/custom/imgacademy/images/helpbox-contact.jpg',
-    title: 'Second meetup',
-    address: 'Ahmadabad',
-  },
-];
 
 const Home = (props) => {
   return (
-    <>
+    <Fragment>
+      <Head>
+        <title>MeetUp </title>
+      </Head>
       <MeetupList meetups={props.meetups} />
-    </>
+    </Fragment>
   );
 };
 
@@ -40,11 +29,26 @@ const Home = (props) => {
 
 // INFO: SSG: Static Site Generation
 export async function getStaticProps() {
+  const client = await MongoClient.connect(
+    'mongodb+srv://hardy:hardy!!123@cluster0.lbgbb.mongodb.net/meetups?retryWrites=true&w=majority'
+  );
+  const db = client.db();
+  const meetupCollection = db.collection('meetups');
+  const meetupData = await meetupCollection.find().toArray();
+  const sendMeetupsData = meetupData.map((item) => ({
+    title: item.title,
+    address: item.address,
+    image: item.image,
+    id: item._id.toString(),
+  }));
+  client.close();
+
   // fetch data from API
   return {
     props: {
-      meetups: DUMMY_DATA,
+      meetups: sendMeetupsData,
     },
+    revalidate: 1,
   };
 }
 

@@ -3,6 +3,9 @@ import { MongoClient } from 'mongodb';
 
 async function handler(req, res) {
   if (req.method === 'POST') {
+    // ======================
+    // Working Demo by Author
+    // ======================
     const data = req.body;
     // connect to DB
     const client = await MongoClient.connect(
@@ -15,6 +18,22 @@ async function handler(req, res) {
     client.close();
 
     res.status(201).json({ message: 'Meetup inserted !!' });
+
+    // =======================
+    // Working Demo by MongoDB NOT WORKING
+    // =======================
+    // const uri = "mongodb+srv://hardy:hardy!!123@cluster0.lbgbb.mongodb.net/meetups?retryWrites=true&w=majority";
+    // const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    // client.connect(async err => {
+    //   const collection = client.db().collection("meetups");
+    //   console.log(collection);
+    //   // perform actions on the collection object
+    //   const result = await collection.insertOne(data);
+    //   console.log(result);
+    //   res.status(201).json({ message: 'Meetup inserted !!' });
+    //   client.close();
+    // });
+
   }
 }
 
