@@ -1,8 +1,6 @@
 import { Form, Row, Col, Button } from 'react-bootstrap';
 
-export interface IUserDetailsProps {}
-
-export default function UserDetails(props: IUserDetailsProps) {
+const StudentDetails = () => {
   return (
     <div>
       <Form className='mt-3'>
@@ -41,3 +39,5 @@ export default function UserDetails(props: IUserDetailsProps) {
     </div>
   );
 }
+
+export default StudentDetails;
