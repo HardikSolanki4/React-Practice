@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Table } from 'react-bootstrap';
+import RemoveStudent from '../RemoveStudent/RemoveStudent';
 
 interface Props {
   UserLists: {
@@ -36,7 +37,9 @@ const UserList: React.FC<Props> = ({ UserLists }) => {
                 <td>{item.name}</td>
                 <td>{item.class}</td>
                 <td>{item.percentage}</td>
-                <td>Edit Delete</td>
+                <td>Edit
+                  <RemoveStudent />
+                </td>
               </tr>
             ))
           ) : (

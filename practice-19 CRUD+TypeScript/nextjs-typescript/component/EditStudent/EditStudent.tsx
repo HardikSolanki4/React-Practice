@@ -1,6 +1,6 @@
 import { Form, Row, Col, Button } from 'react-bootstrap';
 
-const AddStudent = () => {
+const EditStudent = () => {
   return (
     <Form className='mt-3'>
       <Row className='mb-3'>
@@ -68,4 +68,4 @@ const AddStudent = () => {
   );
 };
 
-export default AddStudent;
+export default EditStudent;
